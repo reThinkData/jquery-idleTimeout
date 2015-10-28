@@ -63,6 +63,7 @@
     //##############################
     //## Private Variables
     //##############################
+      store = userRuntimeConfig.store || window.store,
       currentConfig = $.extend(defaultConfig, userRuntimeConfig), // merge default and user runtime configuration
       origTitle = document.title, // save original browser title
       activityDetector,
@@ -152,9 +153,14 @@
     //----------- WARNING DIALOG FUNCTIONS --------------//
     openWarningDialog = function () {
 
-      var dialogContent = "<div id='idletimer_warning_dialog'><p>" + currentConfig.dialogText + "</p><p style='display:inline'>" + currentConfig.dialogTimeRemaining + ": <div style='display:inline' id='countdownDisplay'></div></p></div>";
-
-      $(dialogContent).dialog({
+      var 
+      dialogContent =
+        "<div id='idletimer_warning_dialog'><p>" +
+        currentConfig.dialogText +
+        "</p><p style='display:inline'>" +
+        currentConfig.dialogTimeRemaining +
+        ": <div style='display:inline' id='countdownDisplay'></div></p></div>",
+      dialogOptions = $.extend({
         buttons: [{
           text: currentConfig.dialogStayLoggedInButton,
           click: function () {
@@ -162,21 +168,21 @@
             stopDialogTimer();
             startIdleTimer();
           }
-        },
-          {
-            text: currentConfig.dialogLogOutNowButton,
-            click: function () {
-              logoutUser();
-            }
+        }, {
+          text: currentConfig.dialogLogOutNowButton,
+          click: function () {
+            logoutUser();
           }
-          ],
+        }],
         closeOnEscape: false,
         modal: true,
         title: currentConfig.dialogTitle,
         open: function () {
           $(this).closest('.ui-dialog').find('.ui-dialog-titlebar-close').hide();
         }
-      });
+      }, userRuntimeConfig.dialogOptions);
+
+      $(dialogContent).dialog(dialogOptions);
 
       countdownDisplay();
 
